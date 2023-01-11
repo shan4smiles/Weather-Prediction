@@ -1,0 +1,56 @@
+def Complex():
+    import pandas as pd
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    df = pd.read_csv(r'C:\Users\DELL\Downloads\weatherHistory.csv')
+    a = df['Summary'].value_counts()
+    g = pd.DataFrame(df['Summary'].value_counts())
+    g['Sum'] = df['Summary'].value_counts().index.tolist()
+    feature_extraction_formula = TfidfVectorizer(min_df = 1)
+    c = feature_extraction_formula.fit_transform(df['Summary'].value_counts().index.tolist())
+    e = feature_extraction_formula.fit_transform(df['Summary'])
+    d = pd.DataFrame(c)
+    print(g['Sum'])
+    print(d)
+    print(df['Summary'])
+    print(e)
+import pandas as pd
+df = pd.read_csv(r'C:\Users\DELL\Downloads\weatherHistory.csv')
+
+# Data Normalization
+a = df['Summary']
+b = df['Daily Summary']
+c = df['Precip Type']
+from sklearn.preprocessing import LabelEncoder
+outlook_at = LabelEncoder()
+df['Summary_a'] = outlook_at.fit_transform(a)
+df['D_Sum_b'] = outlook_at.fit_transform(b)
+df['Precip_c'] = outlook_at.fit_transform(c)
+d = df['Summary_a']
+e = df['D_Sum_b']
+f = df['Precip_c']
+print(a.head(51),'\n',d.head(51),'\n')
+print(b.head(51), '\n', e.head(51),'\n')
+print(c.head(51),'\n',f.head(51))
+
+# loading data
+X = df.drop(['Formatted Date','Summary','Daily Summary','Precip Type','D_Sum_b'], axis='columns')
+Y = e
+from sklearn.model_selection import train_test_split
+train_x, test_x, train_y, test_y = train_test_split(X,Y, test_size=0.2)
+#print(X,'\n', Y)
+from sklearn.naive_bayes import GaussianNB
+reg = GaussianNB()
+#from sklearn import tree
+#reg = tree.DecisionTreeClassifier()
+reg.fit(train_x, train_y)
+from sklearn.metrics import accuracy_score
+ACC = accuracy_score(train_y, reg.predict(train_x))
+acc = accuracy_score(test_y, reg.predict(test_x))
+print('Accuracy is: ', ACC)
+print('T.Accuracy is: ', acc)
+
+# Predicting
+import numpy as np
+x_o = np.random.randint(0,1,10)
+x_x = np.asarray(x_o).reshape(1,-1)
+print(reg.predict(x_x))
